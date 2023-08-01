@@ -4,7 +4,7 @@ import (
 	"fmt"
 	pb "github.com/blazee5/film-api/api/proto"
 	"github.com/blazee5/film-api/internal/config"
-	filmgrpc "github.com/blazee5/film-api/internal/grpc/film"
+	usergrpc "github.com/blazee5/film-api/internal/grpc/user"
 	"github.com/blazee5/film-api/internal/storage/postgres"
 	sl "github.com/blazee5/film-api/lib/logger/slog"
 	"golang.org/x/exp/slog"
@@ -17,7 +17,7 @@ func main() {
 
 	log := sl.SetupLogger(cfg.Env)
 
-	log.Info("starting film server...", slog.String("env", cfg.Env))
+	log.Info("starting user server...", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
 
 	db, err := postgres.NewPostgres(cfg)
@@ -30,7 +30,7 @@ func main() {
 		log.Info("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterFilmServiceServer(s, &filmgrpc.Server{Db: db})
+	pb.RegisterUserServiceServer(s, &usergrpc.Server{Db: db})
 	log.Info(fmt.Sprintf("server listening at %s", lis.Addr().String()))
 	if err := s.Serve(lis); err != nil {
 		log.Info("failed to serve: %v", err)

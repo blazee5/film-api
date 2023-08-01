@@ -1,8 +1,8 @@
-package film
+package film_grpc
 
 import (
 	"context"
-	pb "github.com/blazee5/film-api/internal/film/api/film_v1"
+	pb "github.com/blazee5/film-api/api/proto"
 	"github.com/blazee5/film-api/internal/storage/postgres"
 	"gorm.io/gorm"
 )

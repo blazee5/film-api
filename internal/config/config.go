@@ -13,7 +13,7 @@ type Config struct {
 	DBUser     string `yaml:"db_user" env:"DB_USER" env-default:"postgres"`
 	DBPassword string `yaml:"db_password" env:"DB_PASSWORD" env-default:""`
 	DBName     string `yaml:"db_name" env:"DB_NAME" env-default:"ecommerce"`
-	HttpServer
+	HttpServer `yaml:"http_server"`
 }
 
 type HttpServer struct {
