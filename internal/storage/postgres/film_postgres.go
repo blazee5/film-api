@@ -18,7 +18,7 @@ func CreateFilm(db *gorm.DB, in *pb.Film) (id int32, err error) {
 	return film.Id, nil
 }
 
-func GetFilm(db *gorm.DB, in *pb.FilmRequest) (film *models.Film, err error) {
+func GetFilm(db *gorm.DB, in *pb.FilmRequest) (film *pb.Film, err error) {
 	result := db.First(&models.Film{}, in.Id)
 
 	var filmRes models.Film
@@ -27,10 +27,10 @@ func GetFilm(db *gorm.DB, in *pb.FilmRequest) (film *models.Film, err error) {
 		return nil, result.Error
 	}
 
-	return &models.Film{Id: filmRes.Id, Title: filmRes.Title, Description: filmRes.Description, Genre: filmRes.Genre}, nil
+	return &pb.Film{Id: filmRes.Id, Title: filmRes.Title, Description: filmRes.Description, Genre: filmRes.Genre}, nil
 }
 
-func UpdateFilm(db *gorm.DB, in *pb.Film) (film *models.Film, err error) {
+func UpdateFilm(db *gorm.DB, in *pb.Film) (film *pb.Film, err error) {
 	result := db.Model(&models.Film{Id: in.Id}).Updates(models.Film{Title: in.Title, Description: in.Description, Genre: in.Genre})
 
 	var filmRes models.Film
@@ -41,7 +41,7 @@ func UpdateFilm(db *gorm.DB, in *pb.Film) (film *models.Film, err error) {
 		return nil, result.Error
 	}
 
-	return &models.Film{Id: filmRes.Id, Title: filmRes.Title, Description: filmRes.Description, Genre: filmRes.Genre}, nil
+	return &pb.Film{Id: filmRes.Id, Title: filmRes.Title, Description: filmRes.Description, Genre: filmRes.Genre}, nil
 }
 
 func DeleteFilm(db *gorm.DB, in *pb.FilmRequest) error {
