@@ -34,7 +34,9 @@ func main() {
 	}
 	s := grpc.NewServer()
 	pb.RegisterFilmServiceServer(s, &filmgrpc.Server{Db: db})
+
 	log.Info(fmt.Sprintf("server listening at %s", lis.Addr().String()))
+
 	go func() {
 		if err := s.Serve(lis); err != nil {
 			log.Info("failed to serve: %v", err)

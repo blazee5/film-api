@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package film;
+package films;
 
 option go_package = "github.com/blazee5/films-api";
 
@@ -17,6 +17,10 @@ message UserRequest {
 
 message UserResponse {
   int32 id = 1;
+}
+
+message Token {
+  string token = 1;
 }
 
 message Film {
@@ -46,7 +50,8 @@ service FilmService {
 }
 
 service UserService {
-  rpc CreateUser(User) returns (UserResponse);
+  rpc SignUp(User) returns (UserResponse);
+  rpc SignIn(User) returns (Token);
   rpc GetUser(UserRequest) returns (User);
   rpc UpdateUser(User) returns (User);
   rpc DeleteUser(UserRequest) returns (SuccessResponse);
