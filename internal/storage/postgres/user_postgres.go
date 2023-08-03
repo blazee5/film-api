@@ -7,10 +7,10 @@ import (
 	"gorm.io/gorm"
 )
 
-const salt = "ahDJsksadjDjsdo"
+const salt = "DFDjdf2434fdJFHSsdf"
 
 func CreateUser(db *gorm.DB, in *pb.User) (id int32, err error) {
-	in.Password = auth.GenerateHasPassword(in.Password, salt)
+	in.Password = auth.GenerateHashPassword(in.Password, salt)
 
 	user := &models.User{Name: in.Name, Email: in.Email, Password: in.Password}
 

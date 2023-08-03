@@ -10,6 +10,9 @@ import (
 	"golang.org/x/exp/slog"
 	"google.golang.org/grpc"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -32,7 +35,23 @@ func main() {
 	s := grpc.NewServer()
 	pb.RegisterFilmServiceServer(s, &filmgrpc.Server{Db: db})
 	log.Info(fmt.Sprintf("server listening at %s", lis.Addr().String()))
-	if err := s.Serve(lis); err != nil {
-		log.Info("failed to serve: %v", err)
+	go func() {
+		if err := s.Serve(lis); err != nil {
+			log.Info("failed to serve: %v", err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	s.GracefulStop()
+	dbCon, err := db.DB()
+	if err != nil {
+		log.Info("error in db:", sl.Err(err))
+	}
+	err = dbCon.Close()
+	if err != nil {
+		log.Info("error while close db:", sl.Err(err))
 	}
 }
