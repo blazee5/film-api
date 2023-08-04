@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateFilm(db *gorm.DB, in *pb.Film) (id int32, err error) {
+func CreateFilm(db *gorm.DB, in *pb.Film) (id int64, err error) {
 	film := &models.Film{Title: in.Title, Description: in.Description, Genre: in.Genre}
 
 	result := db.Create(&film)

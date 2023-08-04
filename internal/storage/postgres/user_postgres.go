@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"errors"
 	pb "github.com/blazee5/film-api/api/proto"
 	"github.com/blazee5/film-api/internal/models"
 	"github.com/blazee5/film-api/lib/auth"
@@ -9,7 +10,7 @@ import (
 
 const salt = "DFDjdf2434fdJFHSsdf"
 
-func CreateUser(db *gorm.DB, in *pb.User) (id int32, err error) {
+func CreateUser(db *gorm.DB, in *pb.User) (id int64, err error) {
 	in.Password = auth.GenerateHashPassword(in.Password, salt)
 
 	user := &models.User{Name: in.Name, Email: in.Email, Password: in.Password}
@@ -57,4 +58,16 @@ func DeleteUser(db *gorm.DB, in *pb.UserRequest) error {
 	}
 
 	return nil
+}
+
+func ValidateUser(db *gorm.DB, email, password string) (*models.User, error) {
+	var user *models.User
+
+	result := db.Where("email = ? AND password = ?", email, password).Find(&user)
+
+	if result.RowsAffected == 0 {
+		return nil, errors.New("invalid credentials")
+	}
+
+	return user, nil
 }

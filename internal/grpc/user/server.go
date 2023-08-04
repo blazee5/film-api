@@ -4,6 +4,7 @@ import (
 	"context"
 	pb "github.com/blazee5/film-api/api/proto"
 	"github.com/blazee5/film-api/internal/storage/postgres"
+	"github.com/blazee5/film-api/lib/auth"
 	"gorm.io/gorm"
 )
 
@@ -12,7 +13,11 @@ type Server struct {
 	pb.UnimplementedUserServiceServer
 }
 
-func (s *Server) CreateUser(ctx context.Context, in *pb.User) (*pb.UserResponse, error) {
+const (
+	salt = "DFDjdf2434fdJFHSsdf"
+)
+
+func (s *Server) SignUp(ctx context.Context, in *pb.User) (*pb.UserResponse, error) {
 	id, err := postgres.CreateUser(s.Db, in)
 
 	if err != nil {
@@ -20,6 +25,22 @@ func (s *Server) CreateUser(ctx context.Context, in *pb.User) (*pb.UserResponse,
 	}
 
 	return &pb.UserResponse{Id: id}, nil
+}
+
+func (s *Server) SignIn(ctx context.Context, in *pb.User) (*pb.Token, error) {
+	user, err := postgres.ValidateUser(s.Db, in.Email, auth.GenerateHashPassword(in.Password, salt))
+
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := auth.GenerateToken(s.Db, user.Id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Token{Token: token}, nil
 }
 
 func (s *Server) GetUser(ctx context.Context, in *pb.UserRequest) (*pb.User, error) {
