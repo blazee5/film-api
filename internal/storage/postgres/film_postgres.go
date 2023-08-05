@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	pb "github.com/blazee5/film-api/api/proto"
+	pb "github.com/blazee5/film-api/api/proto/v1"
 	"github.com/blazee5/film-api/internal/models"
 	"gorm.io/gorm"
 )

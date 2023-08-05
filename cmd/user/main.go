@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	pb "github.com/blazee5/film-api/api/proto"
+	pb "github.com/blazee5/film-api/api/proto/v1"
 	"github.com/blazee5/film-api/internal/config"
 	usergrpc "github.com/blazee5/film-api/internal/grpc/user"
+	"github.com/blazee5/film-api/internal/grpc/user/interceptors/auth"
 	"github.com/blazee5/film-api/internal/storage/postgres"
 	sl "github.com/blazee5/film-api/lib/logger/slog"
 	"golang.org/x/exp/slog"
@@ -32,7 +33,9 @@ func main() {
 	if err != nil {
 		log.Info("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		withServerUnaryInterceptor(),
+	)
 	pb.RegisterUserServiceServer(s, &usergrpc.Server{Db: db})
 
 	log.Info(fmt.Sprintf("server listening at %s", lis.Addr().String()))
@@ -56,4 +59,8 @@ func main() {
 	if err != nil {
 		log.Info("error while close db:", sl.Err(err))
 	}
+}
+
+func withServerUnaryInterceptor() grpc.ServerOption {
+	return grpc.UnaryInterceptor(auth.ServerInterceptor)
 }

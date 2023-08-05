@@ -3,8 +3,10 @@ module github.com/blazee5/film-api
 go 1.20
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	golang.org/x/exp v0.0.0-20230728194245-b0cb94b80691
+	google.golang.org/appengine v1.6.7
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
 	gorm.io/driver/postgres v1.5.2
@@ -13,7 +15,6 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
-	github.com/golang-jwt/jwt/v5 v5.0.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect

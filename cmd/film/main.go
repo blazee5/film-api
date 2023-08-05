@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	pb "github.com/blazee5/film-api/api/proto"
+	pb "github.com/blazee5/film-api/api/proto/v1"
 	"github.com/blazee5/film-api/internal/config"
 	filmgrpc "github.com/blazee5/film-api/internal/grpc/film"
 	"github.com/blazee5/film-api/internal/storage/postgres"
