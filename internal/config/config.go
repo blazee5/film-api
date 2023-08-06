@@ -14,6 +14,7 @@ type Config struct {
 	DBPassword string `yaml:"db_password" env:"DB_PASSWORD" env-default:""`
 	DBName     string `yaml:"db_name" env:"DB_NAME" env-default:"ecommerce"`
 	HttpServer `yaml:"http_server"`
+	RabbitMq   `yaml:"rabbit_mq"`
 }
 
 type HttpServer struct {
@@ -21,6 +22,13 @@ type HttpServer struct {
 	Port        string        `yaml:"port" env:"PORT" env-default:"8080"`
 	Timeout     time.Duration `yaml:"timeout" env:"TIMEOUT" env-default:"4s"`
 	IdleTimeout time.Duration `yaml:"idle_timeout" env:"IDLE_TIMEOUT" env-default:"60s"`
+}
+
+type RabbitMq struct {
+	RabbitMQUser     string `yaml:"rabbit_mq_user" env:"RABBITMQ_USER:" env-default:"guest"`
+	RabbitMQPassword string `yaml:"rabbit_mq_password" env:"RABBITMQ_PASSWORD:" env-default:"guest"`
+	RabbitMQHost     string `yaml:"rabbit_mq_host" env:"RABBITMQ_HOST:" env-default:"localhost"`
+	RabbitMQPort     string `yaml:"rabbit_mq_port" env:"RABBITMQ_PORT:" env-default:"5672"`
 }
 
 var cfg Config

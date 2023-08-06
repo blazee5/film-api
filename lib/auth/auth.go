@@ -10,6 +10,7 @@ import (
 )
 
 const (
+	salt       = "DFDjdf2434fdJFHSsdf"
 	signingKey = "qjwkjF*H@fh8*HF*HJFKJDh23"
 	tokenTTL   = 12 * time.Hour
 )
@@ -19,7 +20,7 @@ type tokenClaims struct {
 	UserId int64 `json:"user_id"`
 }
 
-func GenerateHashPassword(password, salt string) string {
+func GenerateHashPassword(password string) string {
 	hash := sha1.New()
 	hash.Write([]byte(password))
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))

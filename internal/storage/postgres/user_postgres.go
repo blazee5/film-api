@@ -8,10 +8,8 @@ import (
 	"gorm.io/gorm"
 )
 
-const salt = "DFDjdf2434fdJFHSsdf"
-
-func CreateUser(db *gorm.DB, in *pb.User) (id int64, err error) {
-	in.Password = auth.GenerateHashPassword(in.Password, salt)
+func (p *Postgres) CreateUser(db *gorm.DB, in *pb.User) (id int64, err error) {
+	in.Password = auth.GenerateHashPassword(in.Password)
 
 	user := &models.User{Name: in.Name, Email: in.Email, Password: in.Password}
 
@@ -24,7 +22,7 @@ func CreateUser(db *gorm.DB, in *pb.User) (id int64, err error) {
 	return user.Id, nil
 }
 
-func GetUser(db *gorm.DB, in *pb.UserRequest) (film *pb.User, err error) {
+func (p *Postgres) GetUser(db *gorm.DB, in *pb.UserRequest) (film *pb.User, err error) {
 	result := db.First(&models.User{}, in.Id)
 
 	var userRes models.User
@@ -36,7 +34,7 @@ func GetUser(db *gorm.DB, in *pb.UserRequest) (film *pb.User, err error) {
 	return &pb.User{Id: userRes.Id, Name: userRes.Name, Email: userRes.Email}, nil
 }
 
-func UpdateUser(db *gorm.DB, in *pb.User) (film *pb.User, err error) {
+func (p *Postgres) UpdateUser(db *gorm.DB, in *pb.User) (film *pb.User, err error) {
 	result := db.Model(&models.User{Id: in.Id}).Updates(models.User{Name: in.Name, Email: in.Email})
 
 	var userRes models.User
@@ -50,7 +48,7 @@ func UpdateUser(db *gorm.DB, in *pb.User) (film *pb.User, err error) {
 	return &pb.User{Id: userRes.Id, Name: userRes.Name, Email: userRes.Email}, nil
 }
 
-func DeleteUser(db *gorm.DB, in *pb.UserRequest) error {
+func (p *Postgres) DeleteUser(db *gorm.DB, in *pb.UserRequest) error {
 	result := db.Delete(&models.User{}, in.Id)
 
 	if result.RowsAffected == 0 {
@@ -60,7 +58,7 @@ func DeleteUser(db *gorm.DB, in *pb.UserRequest) error {
 	return nil
 }
 
-func ValidateUser(db *gorm.DB, email, password string) (*models.User, error) {
+func (p *Postgres) ValidateUser(db *gorm.DB, email, password string) (*models.User, error) {
 	var user *models.User
 
 	result := db.Where("email = ? AND password = ?", email, password).Find(&user)

@@ -2,23 +2,34 @@ package user_grpc
 
 import (
 	"context"
+	"errors"
 	pb "github.com/blazee5/film-api/api/proto/v1"
-	"github.com/blazee5/film-api/internal/storage/postgres"
+	"github.com/blazee5/film-api/internal/models"
 	"github.com/blazee5/film-api/lib/auth"
 	"gorm.io/gorm"
 )
 
 type Server struct {
-	Db *gorm.DB
+	Db      *gorm.DB
+	Service UserService
 	pb.UnimplementedUserServiceServer
 }
 
-const (
-	salt = "DFDjdf2434fdJFHSsdf"
-)
+//go:generate go run github.com/vektra/mockery/v2@v2.32.0 --name=UserService
+type UserService interface {
+	CreateUser(db *gorm.DB, in *pb.User) (int64, error)
+	ValidateUser(db *gorm.DB, email, password string) (*models.User, error)
+	GetUser(db *gorm.DB, in *pb.UserRequest) (*pb.User, error)
+	UpdateUser(db *gorm.DB, user *pb.User) (*pb.User, error)
+	DeleteUser(db *gorm.DB, in *pb.UserRequest) error
+}
 
 func (s *Server) SignUp(ctx context.Context, in *pb.User) (*pb.UserResponse, error) {
-	id, err := postgres.CreateUser(s.Db, in)
+	id, err := s.Service.CreateUser(s.Db, in)
+
+	if errors.Is(err, gorm.ErrDuplicatedKey) {
+		return nil, errors.New("email already use")
+	}
 
 	if err != nil {
 		return nil, err
@@ -28,7 +39,7 @@ func (s *Server) SignUp(ctx context.Context, in *pb.User) (*pb.UserResponse, err
 }
 
 func (s *Server) SignIn(ctx context.Context, in *pb.User) (*pb.Token, error) {
-	user, err := postgres.ValidateUser(s.Db, in.Email, auth.GenerateHashPassword(in.Password, salt))
+	user, err := s.Service.ValidateUser(s.Db, in.Email, auth.GenerateHashPassword(in.Password))
 
 	if err != nil {
 		return nil, err
@@ -44,7 +55,10 @@ func (s *Server) SignIn(ctx context.Context, in *pb.User) (*pb.Token, error) {
 }
 
 func (s *Server) GetUser(ctx context.Context, in *pb.UserRequest) (*pb.User, error) {
-	user, err := postgres.GetUser(s.Db, in)
+	//if ctx.Value("user_id") != in.Id {
+	//	return nil, errors.New("you are not this user")
+	//}
+	user, err := s.Service.GetUser(s.Db, in)
 
 	if err != nil {
 		return nil, err
@@ -54,7 +68,7 @@ func (s *Server) GetUser(ctx context.Context, in *pb.UserRequest) (*pb.User, err
 }
 
 func (s *Server) UpdateUser(ctx context.Context, in *pb.User) (*pb.User, error) {
-	user, err := postgres.UpdateUser(s.Db, in)
+	user, err := s.Service.UpdateUser(s.Db, in)
 
 	if err != nil {
 		return nil, err
@@ -64,7 +78,7 @@ func (s *Server) UpdateUser(ctx context.Context, in *pb.User) (*pb.User, error) 
 }
 
 func (s *Server) DeleteUser(ctx context.Context, in *pb.UserRequest) (*pb.SuccessResponse, error) {
-	err := postgres.DeleteUser(s.Db, in)
+	err := s.Service.DeleteUser(s.Db, in)
 
 	if err != nil {
 		return nil, err

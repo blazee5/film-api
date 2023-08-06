@@ -16,7 +16,11 @@ func ServerInterceptor(ctx context.Context, req interface{},
 	handler grpc.UnaryHandler) (interface{}, error) {
 
 	if info.FullMethod == "/films.UserService/GetUser" {
-		if err := authorize(ctx); err != nil {
+		newCtx, err := authorize(ctx)
+
+		ctx = newCtx
+
+		if err != nil {
 			return nil, err
 		}
 	}
@@ -26,27 +30,32 @@ func ServerInterceptor(ctx context.Context, req interface{},
 	return h, err
 }
 
-func authorize(ctx context.Context) error {
+func authorize(ctx context.Context) (context.Context, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return status.Errorf(codes.InvalidArgument, "Retrieving metadata is failed")
+		return ctx, status.Errorf(codes.InvalidArgument, "Retrieving metadata is failed")
 	}
 
 	authHeader, ok := md["authorization"]
 	if !ok {
-		return status.Errorf(codes.Unauthenticated, "Authorization token is not supplied")
+		return ctx, status.Errorf(codes.Unauthenticated, "Authorization token is not supplied")
 	}
 
 	bearerToken := authHeader[0]
 
 	token := strings.Fields(bearerToken)[1]
 
-	_, err := auth.ParseToken(token)
+	id, err := auth.ParseToken(token)
 
-	fmt.Println(ctx)
 	if err != nil {
-		return status.Errorf(codes.Unauthenticated, err.Error())
+		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
-	return nil
+	// TODO: set value user_id in context
+	ctx = metadata.NewOutgoingContext(
+		ctx,
+		metadata.Pairs("user_id", fmt.Sprintf("%d", id)),
+	)
+
+	return ctx, nil
 }

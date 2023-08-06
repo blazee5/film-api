@@ -36,7 +36,11 @@ func main() {
 	s := grpc.NewServer(
 		withServerUnaryInterceptor(),
 	)
-	pb.RegisterUserServiceServer(s, &usergrpc.Server{Db: db})
+
+	pb.RegisterUserServiceServer(s, &usergrpc.Server{
+		Db:      db.Db,
+		Service: &db,
+	})
 
 	log.Info(fmt.Sprintf("server listening at %s", lis.Addr().String()))
 
@@ -46,12 +50,40 @@ func main() {
 		}
 	}()
 
+	//go func() {
+	//	conn, err := rabbitmq.NewRabbitMQConn(cfg)
+	//	if err != nil {
+	//		log.Info("failed to connect rabbitmq:", err)
+	//	}
+	//
+	//	ch, err := conn.Channel()
+	//	if err != nil {
+	//		log.Info("failed to create a channel in rabbitmq:", err)
+	//	}
+	//
+	//	q, err := ch.QueueDeclare(
+	//		"hello",
+	//		false,
+	//		false,
+	//		false,
+	//		false,
+	//		nil,
+	//	)
+	//
+	//	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	//	defer cancel()
+	//
+	//	err = rabbitmq.SendMessage(ctx, "Test message", ch, &q)
+	//
+	//	defer ch.Close()
+	//}()
+
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
 	s.GracefulStop()
-	dbCon, err := db.DB()
+	dbCon, err := db.Db.DB()
 	if err != nil {
 		log.Info("error in db:", sl.Err(err))
 	}
