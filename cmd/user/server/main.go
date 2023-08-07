@@ -37,7 +37,7 @@ func main() {
 		log.Info("failed to listen:", err)
 	}
 	s := grpc.NewServer(
-		withServerUnaryInterceptor(),
+		grpc.UnaryInterceptor(auth.ServerInterceptor),
 	)
 
 	pb.RegisterUserServiceServer(s, &usergrpc.Server{
@@ -60,15 +60,9 @@ func main() {
 
 	ch, err := rabbitmq.NewChannelConn(conn, log)
 
-	defer ch.Close()
+	_, err = rabbitmq.NewQueueConn(ch, log)
 
-	q, err := rabbitmq.NewQueueConn(ch, log)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-
-	err = rabbitmq.SendMessage(ctx, "Hello", ch, q)
-
-	defer cancel()
+	_, cancel := context.WithTimeout(context.Background(), time.Second*5)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
@@ -86,8 +80,12 @@ func main() {
 		log.Info("error while close db:", sl.Err(err))
 	}
 
-}
+	err = conn.Close()
+	if err != nil {
+		log.Info("error while close rabbitmq connection:", sl.Err(err))
+	}
 
-func withServerUnaryInterceptor() grpc.ServerOption {
-	return grpc.UnaryInterceptor(auth.ServerInterceptor)
+	err = ch.Close()
+
+	cancel()
 }

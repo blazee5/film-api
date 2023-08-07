@@ -6,4 +6,5 @@ db_password: ""
 db_name: "films"
 
 http_server:
+  host: "localhost"
   port: "8080"
