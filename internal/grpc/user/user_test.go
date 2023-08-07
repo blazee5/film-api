@@ -142,8 +142,8 @@ func TestServer_GetUser(t *testing.T) {
 		},
 		{
 			name:      "Empty credentials",
-			mockError: errors.New("invalid credentials"),
-			respError: "invalid credentials",
+			input:     &pb.UserRequest{},
+			respError: "you are not this user",
 		},
 	}
 
@@ -157,12 +157,12 @@ func TestServer_GetUser(t *testing.T) {
 
 			if tc.respError == "" || tc.mockError != nil {
 				UserServiceMock.On("GetUser", mock.Anything, tc.input).
-					Return(&pb.User{}, tc.mockError).Once()
+					Return(&pb.UserInfo{}, tc.mockError).Once()
 			}
 
 			s := Server{Service: UserServiceMock}
 
-			res, err := s.GetUser(context.Background(), tc.input)
+			res, err := s.GetUser(context.WithValue(context.Background(), "user_id", 1), tc.input)
 
 			if tc.respError != "" {
 				require.Equal(t, tc.respError, err.Error())
@@ -170,7 +170,7 @@ func TestServer_GetUser(t *testing.T) {
 				require.NoError(t, err)
 			}
 
-			require.IsType(t, &pb.User{}, res)
+			require.IsType(t, &pb.UserInfo{}, res)
 		})
 	}
 }

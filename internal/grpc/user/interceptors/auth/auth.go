@@ -50,7 +50,7 @@ func authorize(ctx context.Context) (context.Context, error) {
 		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
-	ctx = context.WithValue(ctx, "user_id", id)
+	ctx = context.WithValue(ctx, "user_id", int(id))
 
 	return ctx, nil
 }

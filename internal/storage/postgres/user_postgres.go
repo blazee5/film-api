@@ -22,7 +22,7 @@ func (p *Postgres) CreateUser(db *gorm.DB, in *pb.User) (id int64, err error) {
 	return user.Id, nil
 }
 
-func (p *Postgres) GetUser(db *gorm.DB, in *pb.UserRequest) (film *pb.User, err error) {
+func (p *Postgres) GetUser(db *gorm.DB, in *pb.UserRequest) (film *pb.UserInfo, err error) {
 	result := db.First(&models.User{}, in.Id)
 
 	var userRes models.User
@@ -31,7 +31,7 @@ func (p *Postgres) GetUser(db *gorm.DB, in *pb.UserRequest) (film *pb.User, err 
 		return nil, result.Error
 	}
 
-	return &pb.User{Id: userRes.Id, Name: userRes.Name, Email: userRes.Email}, nil
+	return &pb.UserInfo{Id: userRes.Id, Name: userRes.Name, Email: userRes.Email}, nil
 }
 
 func (p *Postgres) UpdateUser(db *gorm.DB, in *pb.User) (film *pb.User, err error) {

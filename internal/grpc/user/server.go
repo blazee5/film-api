@@ -19,7 +19,7 @@ type Server struct {
 type UserService interface {
 	CreateUser(db *gorm.DB, in *pb.User) (int64, error)
 	ValidateUser(db *gorm.DB, email, password string) (*models.User, error)
-	GetUser(db *gorm.DB, in *pb.UserRequest) (*pb.User, error)
+	GetUser(db *gorm.DB, in *pb.UserRequest) (*pb.UserInfo, error)
 	UpdateUser(db *gorm.DB, user *pb.User) (*pb.User, error)
 	DeleteUser(db *gorm.DB, in *pb.UserRequest) error
 }
@@ -54,8 +54,8 @@ func (s *Server) SignIn(ctx context.Context, in *pb.User) (*pb.Token, error) {
 	return &pb.Token{Token: token}, nil
 }
 
-func (s *Server) GetUser(ctx context.Context, in *pb.UserRequest) (*pb.User, error) {
-	if ctx.Value("user_id") != in.Id {
+func (s *Server) GetUser(ctx context.Context, in *pb.UserRequest) (*pb.UserInfo, error) {
+	if ctx.Value("user_id") != int(in.Id) {
 		return nil, errors.New("you are not this user")
 	}
 	user, err := s.Service.GetUser(s.Db, in)
