@@ -33,7 +33,10 @@ func main() {
 		log.Info("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterFilmServiceServer(s, &filmgrpc.Server{Db: db})
+	pb.RegisterFilmServiceServer(s, &filmgrpc.Server{
+		Db:      db.Db,
+		Service: &db,
+	})
 
 	log.Info(fmt.Sprintf("server listening at %s", lis.Addr().String()))
 
@@ -48,7 +51,7 @@ func main() {
 	<-quit
 
 	s.GracefulStop()
-	dbCon, err := db.DB()
+	dbCon, err := db.Db.DB()
 	if err != nil {
 		log.Info("error in db:", sl.Err(err))
 	}

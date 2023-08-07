@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateFilm(db *gorm.DB, in *pb.Film) (id int64, err error) {
+func (p *Postgres) CreateFilm(db *gorm.DB, in *pb.Film) (id int64, err error) {
 	film := &models.Film{Title: in.Title, Description: in.Description, Genre: in.Genre}
 
 	result := db.Create(&film)
@@ -18,7 +18,7 @@ func CreateFilm(db *gorm.DB, in *pb.Film) (id int64, err error) {
 	return film.Id, nil
 }
 
-func GetFilm(db *gorm.DB, in *pb.FilmRequest) (film *pb.Film, err error) {
+func (p *Postgres) GetFilm(db *gorm.DB, in *pb.FilmRequest) (film *pb.Film, err error) {
 	result := db.First(&models.Film{}, in.Id)
 
 	var filmRes models.Film
@@ -30,7 +30,7 @@ func GetFilm(db *gorm.DB, in *pb.FilmRequest) (film *pb.Film, err error) {
 	return &pb.Film{Id: filmRes.Id, Title: filmRes.Title, Description: filmRes.Description, Genre: filmRes.Genre}, nil
 }
 
-func UpdateFilm(db *gorm.DB, in *pb.Film) (film *pb.Film, err error) {
+func (p *Postgres) UpdateFilm(db *gorm.DB, in *pb.Film) (film *pb.Film, err error) {
 	result := db.Model(&models.Film{Id: in.Id}).Updates(models.Film{Title: in.Title, Description: in.Description, Genre: in.Genre})
 
 	var filmRes models.Film
@@ -44,7 +44,7 @@ func UpdateFilm(db *gorm.DB, in *pb.Film) (film *pb.Film, err error) {
 	return &pb.Film{Id: filmRes.Id, Title: filmRes.Title, Description: filmRes.Description, Genre: filmRes.Genre}, nil
 }
 
-func DeleteFilm(db *gorm.DB, in *pb.FilmRequest) error {
+func (p *Postgres) DeleteFilm(db *gorm.DB, in *pb.FilmRequest) error {
 	result := db.Delete(&models.Film{}, in.Id)
 
 	if result.RowsAffected == 0 {
