@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"github.com/blazee5/film-api/lib/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -51,11 +50,7 @@ func authorize(ctx context.Context) (context.Context, error) {
 		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
-	// TODO: set value user_id in context
-	ctx = metadata.NewOutgoingContext(
-		ctx,
-		metadata.Pairs("user_id", fmt.Sprintf("%d", id)),
-	)
+	ctx = context.WithValue(ctx, "user_id", id)
 
 	return ctx, nil
 }

@@ -55,9 +55,9 @@ func (s *Server) SignIn(ctx context.Context, in *pb.User) (*pb.Token, error) {
 }
 
 func (s *Server) GetUser(ctx context.Context, in *pb.UserRequest) (*pb.User, error) {
-	//if ctx.Value("user_id") != in.Id {
-	//	return nil, errors.New("you are not this user")
-	//}
+	if ctx.Value("user_id") != in.Id {
+		return nil, errors.New("you are not this user")
+	}
 	user, err := s.Service.GetUser(s.Db, in)
 
 	if err != nil {
