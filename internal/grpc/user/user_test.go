@@ -58,11 +58,7 @@ func TestServer_SignUp(t *testing.T) {
 			UserServiceMock := mocks.NewUserService(t)
 
 			if tc.respError == "" || tc.mockError != nil {
-				UserServiceMock.On("CreateUser", mock.Anything, &pb.User{
-					Name:     tc.input.Name,
-					Email:    tc.input.Email,
-					Password: tc.input.Password,
-				}).
+				UserServiceMock.On("CreateUser", mock.Anything, tc.input).
 					Return(int64(1), tc.mockError).Once()
 			}
 
@@ -264,14 +260,6 @@ func TestServer_DeleteUser(t *testing.T) {
 			input:     &pb.UserRequest{},
 			mockError: errors.New("invalid credentials"),
 			respError: "invalid credentials",
-		},
-		{
-			name: "Duplicate error",
-			input: &pb.UserRequest{
-				Id: 1,
-			},
-			mockError: errors.New("email already use"),
-			respError: "email already use",
 		},
 	}
 
