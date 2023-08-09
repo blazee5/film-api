@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func ServerInterceptor(ctx context.Context, req interface{},
+func AuthInterceptor(ctx context.Context, req interface{},
 	info *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler) (interface{}, error) {
 

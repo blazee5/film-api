@@ -2,6 +2,7 @@ package rabbitmq
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/blazee5/film-api/internal/config"
 	sl "github.com/blazee5/film-api/lib/logger/slog"
@@ -50,7 +51,7 @@ func NewQueueConn(ch *amqp.Channel, log *slog.Logger) (*amqp.Queue, error) {
 	return &q, nil
 }
 
-func SendMessage(ctx context.Context, message string, ch *amqp.Channel, q *amqp.Queue) error {
+func PublishMessage(ctx context.Context, message string, ch *amqp.Channel, q *amqp.Queue) error {
 	err := ch.PublishWithContext(ctx,
 		"",
 		q.Name,
@@ -66,4 +67,14 @@ func SendMessage(ctx context.Context, message string, ch *amqp.Channel, q *amqp.
 	}
 
 	return nil
+}
+
+func NewConsumer(ctx context.Context, ch *amqp.Channel, q *amqp.Queue, consumeName string) (<-chan amqp.Delivery, error) {
+	msgs, err := ch.Consume(q.Name, consumeName, false, false, false, false, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return msgs, errors.New("")
 }
