@@ -65,7 +65,7 @@ func main() {
 	}
 
 	go func() {
-		log.Error("", metrics.ListenMetrics("localhost:2222"))
+		log.Error("", metrics.ListenMetrics("0.0.0.0:2222"))
 	}()
 
 	conn, err := rabbitmq.NewRabbitMQConn(cfg)
