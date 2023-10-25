@@ -2,7 +2,7 @@ package metricsgrpc
 
 import (
 	"context"
-	"github.com/blazee5/film-api/internal/metrics"
+	"github.com/blazee5/film-api/users/internal/metrics"
 	"google.golang.org/grpc"
 )
 
