@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	pb "github.com/blazee5/film-api/api/proto/v1"
+	pb "github.com/blazee5/film-api/films/api/proto/v1"
 	"github.com/blazee5/film-api/films/internal/config"
 	filmgrpc "github.com/blazee5/film-api/films/internal/grpc/film"
 	"github.com/blazee5/film-api/films/internal/storage/postgres"
 	sl "github.com/blazee5/film-api/films/lib/logger/slog"
-	"golang.org/x/exp/slog"
 	"google.golang.org/grpc"
+	"log/slog"
 	"net"
 	"os"
 	"os/signal"

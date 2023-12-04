@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package films;
+
+option go_package = "github.com/blazee5/films-api/films/api/proto/v1";
+
+import "google/protobuf/timestamp.proto";
+
+message Film {
+  int64 id = 1;
+  string title = 2;
+  string description = 3;
+  string director = 4;
+  google.protobuf.Timestamp release_date = 5;
+}
+
+message FilmRequest {
+  int64 id = 1;
+}
+
+message FilmResponse {
+  int64 id = 1;
+}
+
+message SuccessResponse {
+  string status = 1;
+}
+
+message Genre {
+  int64 genre_id = 1;
+  string name = 2;
+}
+
+message Review {
+  int64 review_id = 1;
+  int64 user_id = 2;
+  int64 movie_id = 3;
+  int64 rating = 4;
+  string comment = 5;
+}
+
+message Rating {
+  int64 id = 1;
+  int64 movie_id = 2;
+  float value = 3;
+}
+
+message Favorite {
+  int64 user_id = 1;
+  int64 movie_id = 2;
+}
+
+service FilmService {
+  rpc CreateFilm(Film) returns (FilmResponse);
+  rpc GetFilm(FilmRequest) returns (Film);
+  rpc UpdateFilm(Film) returns (Film);
+  rpc DeleteFilm(FilmRequest) returns (SuccessResponse);
+}

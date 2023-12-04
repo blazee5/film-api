@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"errors"
-	pb "github.com/blazee5/film-api/api/proto/v1"
+	pb "github.com/blazee5/film-api/users/api/proto/v1"
 	"github.com/blazee5/film-api/users/internal/models"
 	"github.com/blazee5/film-api/users/lib/auth"
 	"gorm.io/gorm"

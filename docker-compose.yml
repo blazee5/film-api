@@ -10,6 +10,8 @@ services:
     image: postgres:latest
     volumes:
       - postgres:/var/lib/postgresql/data
+    environment:
+      - "POSTGRES_PASSWORD=password"
     ports:
       - "5432:5432"
 
@@ -26,11 +28,11 @@ services:
     ports:
       - "3000:3000"
 
-  go_server:
-    image: go_server
-    ports:
-      - "5001:5001"
-      - "2222:2222"
+#  go_server:
+#    image: go_server
+#    ports:
+#      - "5001:5001"
+#      - "2222:2222"
 
 volumes:
   postgres:

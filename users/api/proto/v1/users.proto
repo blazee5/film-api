@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package users;
+
+option go_package = "github.com/blazee5/films-api/users/api/proto/v1";
+
+message User {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
+  string password = 4;
+}
+
+message UserRequest {
+  int64 id = 1;
+}
+
+message UserResponse {
+  int64 id = 1;
+}
+
+message UserInfo {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+message Token {
+  string token = 1;
+}
+
+message SuccessResponse {
+  string status = 1;
+}
+
+service UserService {
+  rpc SignUp(User) returns (UserResponse);
+  rpc SignIn(User) returns (Token);
+  rpc GetUser(UserRequest) returns (UserInfo);
+  rpc UpdateUser(User) returns (User);
+  rpc DeleteUser(UserRequest) returns (SuccessResponse);
+}

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	pb "github.com/blazee5/film-api/api/proto/v1"
+	pb "github.com/blazee5/film-api/users/api/proto/v1"
 	"github.com/blazee5/film-api/users/internal/config"
 	"github.com/blazee5/film-api/users/internal/grpc/interceptors/auth"
 	"github.com/blazee5/film-api/users/internal/grpc/interceptors/metrics"
@@ -10,8 +10,8 @@ import (
 	"github.com/blazee5/film-api/users/internal/metrics"
 	"github.com/blazee5/film-api/users/internal/storage/postgres"
 	sl "github.com/blazee5/film-api/users/lib/logger/slog"
-	"golang.org/x/exp/slog"
 	"google.golang.org/grpc"
+	"log/slog"
 	"net"
 	"os"
 	"os/signal"

@@ -7,7 +7,7 @@ import (
 	"github.com/blazee5/film-api/users/internal/config"
 	sl "github.com/blazee5/film-api/users/lib/logger/slog"
 	amqp "github.com/rabbitmq/amqp091-go"
-	"golang.org/x/exp/slog"
+	"log/slog"
 )
 
 func NewRabbitMQConn(cfg *config.Config) (*amqp.Connection, error) {

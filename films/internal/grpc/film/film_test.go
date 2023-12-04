@@ -3,7 +3,7 @@ package film_grpc
 import (
 	"context"
 	"errors"
-	pb "github.com/blazee5/film-api/api/proto/v1"
+	pb "github.com/blazee5/film-api/films/api/proto/v1"
 	"github.com/blazee5/film-api/films/internal/grpc/film/mocks"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"

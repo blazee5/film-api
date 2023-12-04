@@ -14,7 +14,7 @@ func AuthInterceptor(ctx context.Context, req interface{},
 	info *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler) (interface{}, error) {
 
-	if info.FullMethod == "/films.UserService/GetUser" {
+	if info.FullMethod == "/users.UserService/GetUser" {
 		newCtx, err := authorize(ctx)
 
 		ctx = newCtx
